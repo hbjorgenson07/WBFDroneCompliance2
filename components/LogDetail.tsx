@@ -1,4 +1,4 @@
-import { SprayLog } from '@/lib/types'
+import { SprayLog, ProductEntry } from '@/lib/types'
 import Badge from './ui/Badge'
 import { formatDate, formatTime } from '@/lib/utils'
 
@@ -61,22 +61,49 @@ export default function LogDetail({ log }: LogDetailProps) {
       </Section>
 
       {/* Product / Application Information */}
-      <Section title="Product / Application Information">
-        <Field label="Product Name"          value={log.product_name} />
-        <Field label="EPA Registration #"    value={log.epa_registration_number} />
-        <Field label="Product Type"          value={log.product_type} />
-        <Field label="Target Pest / Purpose" value={log.target_pest} />
-        <Field label="Rate Applied"          value={log.rate_applied} />
-        <Field label="Total Quantity Used"   value={log.total_quantity_used} />
-        <Field label="Carrier Type"          value={log.carrier_type} />
-        <Field label="Carrier Rate"          value={log.carrier_rate} />
-        <Field label="Tank Mix Notes"        value={log.tank_mix_notes} />
-        <Field
-          label="Restricted Use Pesticide"
-          value={log.restricted_use_pesticide ? 'Yes — Restricted Use Pesticide' : 'No'}
-        />
-        <Field label="Label / Restriction Notes" value={log.label_restriction_notes} />
-      </Section>
+      {(() => {
+        // Auto-migrate: use products array if present, otherwise build from flat fields
+        const products: ProductEntry[] = log.products?.length > 0
+          ? log.products
+          : [{
+              product_name: log.product_name,
+              epa_registration_number: log.epa_registration_number,
+              product_type: log.product_type,
+              target_pest: log.target_pest,
+              rate_applied: log.rate_applied,
+              total_quantity_used: log.total_quantity_used,
+              carrier_type: log.carrier_type,
+              carrier_rate: log.carrier_rate,
+              restricted_use_pesticide: log.restricted_use_pesticide,
+              label_restriction_notes: log.label_restriction_notes,
+            }]
+        const multi = products.length > 1
+
+        return products.map((p, i) => (
+          <Section key={i} title={multi ? `Product ${i + 1}` : 'Product / Application Information'}>
+            <Field label="Product Name"          value={p.product_name} />
+            <Field label="EPA Registration #"    value={p.epa_registration_number} />
+            <Field label="Product Type"          value={p.product_type} />
+            <Field label="Target Pest / Purpose" value={p.target_pest} />
+            <Field label="Rate Applied"          value={p.rate_applied} />
+            <Field label="Total Quantity Used"   value={p.total_quantity_used} />
+            <Field label="Carrier Type"          value={p.carrier_type} />
+            <Field label="Carrier Rate"          value={p.carrier_rate} />
+            <Field
+              label="Restricted Use Pesticide"
+              value={p.restricted_use_pesticide ? 'Yes — Restricted Use Pesticide' : 'No'}
+            />
+            <Field label="Label / Restriction Notes" value={p.label_restriction_notes} />
+          </Section>
+        ))
+      })()}
+
+      {/* Tank Mix Notes (shared across all products) */}
+      {log.tank_mix_notes && (
+        <Section title="Tank Mix Notes">
+          <Field label="Tank Mix Notes" value={log.tank_mix_notes} />
+        </Section>
+      )}
 
       {/* Weather / Conditions */}
       <Section title="Weather / Conditions">

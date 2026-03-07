@@ -37,6 +37,9 @@ export interface SprayLog {
   restricted_use_pesticide: boolean
   label_restriction_notes: string | null
 
+  // Multi-product support (JSONB array in DB)
+  products: ProductEntry[]
+
   // Weather / Conditions
   wind_speed: string | null
   wind_direction: string | null
@@ -61,6 +64,51 @@ export interface SprayLog {
 
 // Form data type — all fields optional except required ones
 export type SprayLogFormData = Omit<SprayLog, 'id' | 'user_id' | 'created_at' | 'updated_at'>
+
+// A single product entry within a spray log (for multi-product / tank mix support)
+export interface ProductEntry {
+  product_name: string | null
+  epa_registration_number: string | null
+  product_type: string | null
+  target_pest: string | null
+  rate_applied: string | null
+  total_quantity_used: string | null
+  carrier_type: string | null
+  carrier_rate: string | null
+  restricted_use_pesticide: boolean
+  label_restriction_notes: string | null
+}
+
+export function emptyProduct(): ProductEntry {
+  return {
+    product_name: null,
+    epa_registration_number: null,
+    product_type: null,
+    target_pest: null,
+    rate_applied: null,
+    total_quantity_used: null,
+    carrier_type: null,
+    carrier_rate: null,
+    restricted_use_pesticide: false,
+    label_restriction_notes: null,
+  }
+}
+
+// A product saved to the user's personal library
+export interface SavedProduct {
+  id: string
+  user_id: string
+  product_name: string
+  epa_registration_number: string | null
+  product_type: string | null
+  target_pest: string | null
+  rate_applied: string | null
+  carrier_type: string | null
+  restricted_use_pesticide: boolean
+  label_restriction_notes: string | null
+  notes: string | null
+  created_at: string
+}
 
 // Filters used on the logs list page
 export interface LogFilters {

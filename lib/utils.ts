@@ -40,7 +40,7 @@ export function buildCsv(logs: SprayLog[]): string {
     'Sky Conditions', 'Inversion Notes', 'Weather Notes',
     'Nozzle/Equipment Notes', 'Swath Width', 'Flight Altitude Notes',
     'Drift Mitigation Notes', 'Incident Notes', 'General Remarks',
-    'Created At', 'Updated At',
+    'Created At', 'Updated At', 'Products (All)',
   ]
 
   const rows = logs.map(log => [
@@ -58,6 +58,7 @@ export function buildCsv(logs: SprayLog[]): string {
     log.flight_altitude_notes ?? '', log.drift_mitigation_notes ?? '',
     log.incident_notes ?? '', log.general_remarks ?? '',
     log.created_at, log.updated_at,
+    log.products?.length > 1 ? JSON.stringify(log.products) : '',
   ])
 
   // Wrap each cell in quotes and escape any internal quotes

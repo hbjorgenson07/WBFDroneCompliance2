@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS spray_logs (
   tank_mix_notes            TEXT,
   restricted_use_pesticide  BOOLEAN DEFAULT false,
   label_restriction_notes   TEXT,
+  products                  JSONB DEFAULT '[]',
 
   -- Weather / Conditions
   wind_speed                TEXT,

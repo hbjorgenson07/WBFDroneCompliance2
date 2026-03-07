@@ -32,7 +32,12 @@ export default function LogCard({ log }: LogCardProps) {
 
       {/* Product and acreage */}
       <div className="flex items-center gap-3 mt-2 text-xs text-gray-600 dark:text-gray-400">
-        {log.product_name && <span>{truncate(log.product_name, 30)}</span>}
+        {(() => {
+          const productCount = log.products?.length ?? 0
+          const displayName = productCount > 0 ? log.products[0]?.product_name : log.product_name
+          const extra = productCount > 1 ? ` +${productCount - 1} more` : ''
+          return displayName ? <span>{truncate(displayName, 30)}{extra && <span className="text-gray-400 dark:text-gray-500">{extra}</span>}</span> : null
+        })()}
         {log.acreage_treated != null && (
           <span className="ml-auto font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
             {log.acreage_treated} ac
