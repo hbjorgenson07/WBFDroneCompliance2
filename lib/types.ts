@@ -110,6 +110,18 @@ export interface SavedProduct {
   created_at: string
 }
 
+// User profile — stores pilot/operator defaults (one row per user)
+export interface UserProfile {
+  id: string
+  user_id: string
+  operator_name: string | null
+  aircraft_tail_number: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type UserProfileFormData = Pick<UserProfile, 'operator_name' | 'aircraft_tail_number'>
+
 // Filters used on the logs list page
 export interface LogFilters {
   search: string

@@ -203,6 +203,21 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
       .catch(() => {}) // Suggestions are non-critical; silently ignore errors
   }, [])
 
+  // Fetch profile defaults for new logs only
+  useEffect(() => {
+    if (isEditing) return
+    fetch('/api/profile')
+      .then(r => r.json())
+      .then(profile => {
+        setForm(f => ({
+          ...f,
+          operator_name: f.operator_name ?? profile.operator_name ?? null,
+          aircraft_tail_number: f.aircraft_tail_number ?? profile.aircraft_tail_number ?? null,
+        }))
+      })
+      .catch(() => {})
+  }, [isEditing])
+
   // Toggle a section open/closed
   function toggleSection(key: keyof typeof sections) {
     setSections(s => ({ ...s, [key]: !s[key] }))

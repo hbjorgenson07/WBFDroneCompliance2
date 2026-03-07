@@ -99,3 +99,28 @@ CREATE TRIGGER spray_logs_updated_at
 CREATE INDEX IF NOT EXISTS spray_logs_user_id_idx ON spray_logs (user_id);
 CREATE INDEX IF NOT EXISTS spray_logs_date_idx ON spray_logs (date DESC);
 CREATE INDEX IF NOT EXISTS spray_logs_status_idx ON spray_logs (mission_status);
+
+-- ============================================================
+-- User Profiles — stores pilot/operator defaults (one row per user)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id                    UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id               UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  operator_name         TEXT,
+  aircraft_tail_number  TEXT,
+  created_at            TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at            TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can only access their own profile"
+  ON user_profiles
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE TRIGGER user_profiles_updated_at
+  BEFORE UPDATE ON user_profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
