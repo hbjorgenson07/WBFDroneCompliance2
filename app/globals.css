@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* Enable Tailwind dark mode via the "dark" class on <html> */
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Smooth scrolling on iOS */
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Print styles — hide nav and action buttons */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+  }
+}
