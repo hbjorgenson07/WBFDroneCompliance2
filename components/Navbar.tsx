@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/logs',      label: 'Logs' },
+  { href: '/products',  label: 'Products' },
   { href: '/map',       label: 'Map' },
   { href: '/stats',     label: 'Stats' },
   { href: '/settings',  label: 'Settings' },
@@ -47,8 +48,19 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2.5 font-bold text-base whitespace-nowrap">
           <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center shadow-sm">
-            <svg className="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            <svg className="w-4.5 h-4.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              {/* 4 rotors */}
+              <circle cx="5" cy="5" r="3.5" opacity="0.7" />
+              <circle cx="19" cy="5" r="3.5" opacity="0.7" />
+              <circle cx="5" cy="19" r="3.5" opacity="0.7" />
+              <circle cx="19" cy="19" r="3.5" opacity="0.7" />
+              {/* arms */}
+              <line x1="7.5" y1="7.5" x2="10" y2="10" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="16.5" y1="7.5" x2="14" y2="10" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="7.5" y1="16.5" x2="10" y2="14" stroke="currentColor" strokeWidth="1.5" />
+              <line x1="16.5" y1="16.5" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5" />
+              {/* center body */}
+              <circle cx="12" cy="12" r="3" />
             </svg>
           </div>
           <span className="text-gray-900 dark:text-white tracking-tight">Spray Log</span>
