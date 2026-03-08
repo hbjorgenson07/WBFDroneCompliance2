@@ -46,10 +46,10 @@ export default async function StatsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Statistics</h1>
+      <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Statistics</h1>
 
       {/* Summary numbers */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatTile label="Total Jobs"    value={logs.length} />
         <StatTile label="Total Acres"   value={totalAcres.toFixed(1)} />
         <StatTile label="Completed"     value={byStatus.completed} />
@@ -94,17 +94,17 @@ export default async function StatsPage() {
 
 function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{label}</p>
-      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{value}</p>
+    <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/80 dark:border-white/5 p-5 hover:shadow-[var(--shadow-1)] transition-all duration-200 ease-out">
+      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">{label}</p>
+      <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mt-1">{value}</p>
     </div>
   )
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
-      <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</h2>
+    <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/80 dark:border-white/5 p-5 space-y-3">
+      <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{title}</h2>
       {children}
     </div>
   )
@@ -120,7 +120,7 @@ function BarRow({ label, count, total, color }: {
         <span className="text-gray-700 dark:text-gray-300">{label}</span>
         <span className="text-gray-500 dark:text-gray-400">{count} ({pct}%)</span>
       </div>
-      <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-2 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full`} style={{ width: `${pct}%` }} />
       </div>
     </div>

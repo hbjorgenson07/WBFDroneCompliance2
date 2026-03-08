@@ -12,10 +12,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary:   'bg-green-700 hover:bg-green-800 text-white border border-green-700',
-  secondary: 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 dark:border-gray-600',
-  danger:    'bg-red-600 hover:bg-red-700 text-white border border-red-600',
-  ghost:     'bg-transparent hover:bg-gray-100 text-gray-600 border border-transparent dark:hover:bg-gray-800 dark:text-gray-400',
+  primary:   'bg-green-600 hover:bg-green-700 text-white border border-green-600 shadow-sm active:scale-[0.98]',
+  secondary: 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 hover:border-gray-300 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-200 dark:border-white/10',
+  danger:    'bg-red-600 hover:bg-red-700 text-white border border-red-600 active:scale-[0.98]',
+  ghost:     'bg-transparent hover:bg-gray-100 text-gray-600 border border-transparent dark:hover:bg-white/5 dark:text-gray-400',
 }
 
 const sizeClasses: Record<Size, string> = {
@@ -37,8 +37,8 @@ export default function Button({
     <button
       disabled={disabled || loading}
       className={`
-        inline-flex items-center justify-center gap-2 rounded-lg font-medium
-        transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1
+        inline-flex items-center justify-center gap-2 rounded-xl font-medium
+        transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50 focus-visible:ring-offset-1
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variantClasses[variant]} ${sizeClasses[size]} ${className}
       `}

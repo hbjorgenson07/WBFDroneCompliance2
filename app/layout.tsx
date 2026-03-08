@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         suppressHydrationWarning is needed because dark mode adds/removes the "dark"
         class on <html> via client-side JS, which differs from the initial server render.
       */}
-      <body className="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased">
+      <body className="bg-[#fafafa] dark:bg-[#0a0a0a] text-[#1a1a1a] dark:text-gray-100 antialiased">
         {children}
       </body>
     </html>

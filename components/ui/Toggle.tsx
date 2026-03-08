@@ -16,14 +16,14 @@ export default function Toggle({ label, description, checked, onChange }: Toggle
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`
-          relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent
-          transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1
+          relative inline-flex h-7 w-12 flex-shrink-0 rounded-full border-2 border-transparent
+          transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50 focus-visible:ring-offset-1
           ${checked ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'}
         `}
       >
         <span
           className={`
-            inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform duration-200
+            inline-block h-[22px] w-[22px] rounded-full bg-white shadow transform transition-transform duration-300
             ${checked ? 'translate-x-5' : 'translate-x-0'}
           `}
         />

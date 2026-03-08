@@ -45,7 +45,7 @@ export default function SettingsForm() {
     }
   }
 
-  if (loading) return <div className="text-sm text-gray-400">Loading...</div>
+  if (loading) return <div className="text-sm text-gray-400 animate-pulse">Loading...</div>
 
   return (
     <div className="max-w-md space-y-4">

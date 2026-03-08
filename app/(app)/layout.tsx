@@ -11,11 +11,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
         {children}
       </main>
       {/* Footer disclaimer */}
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-4 text-center">
+      <footer className="border-t border-gray-200/60 dark:border-white/5 py-4 px-4 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 max-w-2xl mx-auto">
           This tool is for personal recordkeeping and operational organization only.
           Regulatory requirements for aerial application records vary by state and operation type.

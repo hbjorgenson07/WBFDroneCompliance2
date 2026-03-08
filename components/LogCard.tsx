@@ -11,7 +11,7 @@ export default function LogCard({ log }: LogCardProps) {
   return (
     <Link
       href={`/logs/${log.id}`}
-      className="block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-green-400 hover:shadow-sm transition-all"
+      className="block bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/5 rounded-2xl p-5 hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)] transition-all duration-200 ease-out"
     >
       {/* Top row: Job ID + Status badge */}
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -21,13 +21,13 @@ export default function LogCard({ log }: LogCardProps) {
 
       {/* Customer and field */}
       <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-snug">
-        {log.customer_name ?? '—'} &middot; {log.field_name ?? '—'}
+        {log.customer_name ?? '\u2014'} &middot; {log.field_name ?? '\u2014'}
       </p>
 
       {/* Date and aircraft */}
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
         {formatDate(log.date)}
-        {log.aircraft_tail_number && <span className="ml-2 text-gray-400">· {log.aircraft_tail_number}</span>}
+        {log.aircraft_tail_number && <span className="ml-2 text-gray-400">&middot; {log.aircraft_tail_number}</span>}
       </p>
 
       {/* Product and acreage */}

@@ -27,7 +27,7 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
                      filters.crop || filters.from || filters.to
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-3">
+    <div className="bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/5 rounded-2xl p-4 space-y-3">
       {/* Search bar */}
       <Input
         placeholder="Search by customer, field, product, or job ID..."
@@ -90,7 +90,7 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
             <button
               type="button"
               onClick={reset}
-              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline"
+              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
             >
               Clear filters
             </button>

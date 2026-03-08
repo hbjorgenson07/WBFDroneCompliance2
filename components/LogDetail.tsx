@@ -10,8 +10,8 @@ interface LogDetailProps {
 function Field({ label, value }: { label: string; value: string | number | null | undefined }) {
   if (value == null || value === '') return null
   return (
-    <div className="py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
-      <dt className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">{label}</dt>
+    <div className="py-3 border-b border-gray-100 dark:border-white/5 last:border-0">
+      <dt className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">{label}</dt>
       <dd className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">{String(value)}</dd>
     </div>
   )
@@ -19,9 +19,9 @@ function Field({ label, value }: { label: string; value: string | number | null 
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</h2>
+    <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/60 dark:border-white/5 overflow-hidden">
+      <div className="px-4 py-3 bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-200/60 dark:border-white/5">
+        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{title}</h2>
       </div>
       <dl className="px-4 py-1">{children}</dl>
     </div>
@@ -36,7 +36,7 @@ export default function LogDetail({ log }: LogDetailProps) {
       <div className="flex flex-wrap items-start gap-3 justify-between">
         <div>
           <p className="text-xs font-mono text-gray-500 dark:text-gray-400">{log.job_id}</p>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-0.5">
+          <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mt-0.5">
             {log.customer_name ?? 'Unnamed Job'} &mdash; {log.field_name ?? 'No Field'}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formatDate(log.date)}</p>
@@ -91,7 +91,7 @@ export default function LogDetail({ log }: LogDetailProps) {
             <Field label="Carrier Rate"          value={p.carrier_rate} />
             <Field
               label="Restricted Use Pesticide"
-              value={p.restricted_use_pesticide ? 'Yes — Restricted Use Pesticide' : 'No'}
+              value={p.restricted_use_pesticide ? 'Yes \u2014 Restricted Use Pesticide' : 'No'}
             />
             <Field label="Label / Restriction Notes" value={p.label_restriction_notes} />
           </Section>

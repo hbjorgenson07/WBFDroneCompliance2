@@ -8,15 +8,16 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 // Shared input styling
 const inputBase =
-  'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 ' +
-  'focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ' +
-  'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-500'
+  'w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 ' +
+  'hover:border-gray-300 transition-all duration-200 ease-out ' +
+  'focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 ' +
+  'dark:bg-white/5 dark:border-white/10 dark:text-gray-100 dark:placeholder-gray-500 dark:hover:border-white/20 dark:focus:ring-green-400/30 dark:focus:border-green-400'
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, hint, className = '', ...props }, ref) => (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       {label && (
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           {label}
           {props.required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -42,9 +43,9 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, hint, className = '', rows = 3, ...props }, ref) => (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       {label && (
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           {label}
         </label>
       )}

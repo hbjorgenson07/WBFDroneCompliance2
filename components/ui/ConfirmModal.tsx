@@ -26,12 +26,12 @@ export default function ConfirmModal({
   return (
     // Backdrop
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
       onClick={onCancel}
     >
-      {/* Modal panel — stop click propagation so clicking inside doesn't close */}
+      {/* Modal panel */}
       <div
-        className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm p-6"
+        className="bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-[var(--shadow-3)] w-full max-w-sm p-6"
         onClick={e => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>

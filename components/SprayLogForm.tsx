@@ -9,15 +9,13 @@ import Button from './ui/Button'
 import { SprayLogFormData, ProductEntry, emptyProduct } from '@/lib/types'
 import { generateJobId, todayString } from '@/lib/utils'
 import ProductSearch from './ProductSearch'
+import WeatherLocationButton, { WeatherData } from './WeatherLocationButton'
 
 interface SprayLogFormProps {
-  // Initial data for edit mode or duplicate mode
   initialData?: Partial<SprayLogFormData>
-  // The log ID if editing an existing log (undefined = new log)
   logId?: string
 }
 
-// Default empty form state
 function emptyForm(): SprayLogFormData {
   return {
     job_id:                    generateJobId(),
@@ -62,7 +60,21 @@ function emptyForm(): SprayLogFormData {
   }
 }
 
-// Section header with collapse toggle
+// Chevron icon that rotates when section is open
+function ChevronIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  )
+}
+
 function SectionHeader({
   title, open, onToggle
 }: { title: string; open: boolean; onToggle: () => void }) {
@@ -70,12 +82,12 @@ function SectionHeader({
     <button
       type="button"
       onClick={onToggle}
-      className="flex items-center justify-between w-full py-3 px-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg text-left"
+      className="flex items-center justify-between w-full py-3 px-4 bg-gray-50/80 dark:bg-white/[0.03] rounded-xl text-left hover:bg-gray-100/80 dark:hover:bg-white/[0.05] transition-all duration-200 ease-out"
     >
-      <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+      <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
         {title}
       </h2>
-      <span className="text-gray-400 text-sm">{open ? '▲' : '▼'}</span>
+      <ChevronIcon open={open} />
     </button>
   )
 }
@@ -84,10 +96,8 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
   const router = useRouter()
   const isEditing = !!logId
 
-  // Form state — merged from defaults + any initial data passed in
   const [form, setForm] = useState<SprayLogFormData>(() => {
     const base = { ...emptyForm(), ...initialData }
-    // Auto-migrate: flat product fields → products[0]
     if ((!base.products || base.products.length === 0) && base.product_name) {
       base.products = [{
         product_name: base.product_name,
@@ -109,7 +119,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  // Dirty flags: tracks which product indices have had total_quantity_used manually edited
   const qtyDirtyRef = useRef<Set<number>>((() => {
     const dirty = new Set<number>()
     if (initialData?.products?.length) {
@@ -120,7 +129,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
     return dirty
   })())
 
-  // Auto-calculate Total Quantity Used per product from Carrier Rate × Acreage
   useEffect(() => {
     const acres = form.acreage_treated
     if (!acres || acres <= 0) return
@@ -142,12 +150,10 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
     if (changed) setForm(f => ({ ...f, products: updated }))
   }, [form.products, form.acreage_treated])
 
-  // Autocomplete suggestions fetched from the user's existing records
   const [suggestions, setSuggestions] = useState<{
     aircraft: string[]; operators: string[]; customers: string[]; crops: string[]
   }>({ aircraft: [], operators: [], customers: [], crops: [] })
 
-  // Past products for ProductSearch (derived from logs fetch, no extra call)
   const [pastProducts, setPastProducts] = useState<Array<{
     product_name: string
     epa_registration_number: string | null
@@ -159,10 +165,8 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
     label_restriction_notes: string | null
   }>>([])
 
-  // Section open/closed state — all open by default on desktop
   const [sections, setSections] = useState({ mission: true, product: true, weather: true, ops: true })
 
-  // Fetch distinct field values for autocomplete suggestions
   useEffect(() => {
     fetch('/api/logs?limit=500')
       .then(r => r.json())
@@ -177,7 +181,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
           crops:     uniq('crop_type'),
         })
 
-        // Deduplicate past products by product_name for ProductSearch
         const seen = new Set<string>()
         const products = logs
           .filter(l => l.product_name)
@@ -200,10 +203,9 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
           }, [])
         setPastProducts(products)
       })
-      .catch(() => {}) // Suggestions are non-critical; silently ignore errors
+      .catch(() => {})
   }, [])
 
-  // Fetch profile defaults for new logs only
   useEffect(() => {
     if (isEditing) return
     fetch('/api/profile')
@@ -218,17 +220,14 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
       .catch(() => {})
   }, [isEditing])
 
-  // Toggle a section open/closed
   function toggleSection(key: keyof typeof sections) {
     setSections(s => ({ ...s, [key]: !s[key] }))
   }
 
-  // Generic field updater — handles strings, numbers, booleans
   function set(field: keyof SprayLogFormData, value: string | number | boolean | null) {
     setForm(f => ({ ...f, [field]: value === '' ? null : value }))
   }
 
-  // Product-specific updaters
   function setProduct(index: number, field: keyof ProductEntry, value: string | boolean | null) {
     setForm(f => {
       const products = [...f.products]
@@ -241,7 +240,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
   }
   function removeProduct(index: number) {
     setForm(f => ({ ...f, products: f.products.filter((_, i) => i !== index) }))
-    // Shift dirty flags above the removed index
     const newDirty = new Set<number>()
     qtyDirtyRef.current.forEach(i => {
       if (i < index) newDirty.add(i)
@@ -250,7 +248,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
     qtyDirtyRef.current = newDirty
   }
 
-  // Submit the form — either create or update
   async function handleSubmit(redirectToDetail: boolean) {
     if (!form.date) {
       setError('Date is required.')
@@ -263,7 +260,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
       const url    = isEditing ? `/api/logs/${logId}` : '/api/logs'
       const method = isEditing ? 'PUT' : 'POST'
 
-      // Populate flat fields from products[0] for backward compat & search
       const payload = { ...form }
       if (payload.products.length > 0) {
         const p = payload.products[0]
@@ -295,7 +291,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
       if (redirectToDetail) {
         router.push(`/logs/${saved.id}`)
       } else {
-        // Stay on form — if new, update URL to edit route so refreshes don't duplicate
         if (!isEditing) {
           router.replace(`/logs/${saved.id}/edit`)
         }
@@ -307,7 +302,6 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
     }
   }
 
-  // Helper to render a datalist for autocomplete
   function DataList({ id, items }: { id: string; items: string[] }) {
     return (
       <datalist id={id}>
@@ -319,7 +313,7 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
   return (
     <form onSubmit={e => { e.preventDefault(); handleSubmit(true) }} className="space-y-4 pb-10">
 
-      {/* ── Section 1: Mission / Job Information ── */}
+      {/* Section 1: Mission / Job Information */}
       <div className="space-y-3">
         <SectionHeader title="Mission / Job Information" open={sections.mission} onToggle={() => toggleSection('mission')} />
         {sections.mission && (
@@ -328,7 +322,7 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
               label="Job ID"
               value={form.job_id}
               onChange={e => set('job_id', e.target.value)}
-              hint="Auto-generated — you can edit this"
+              hint="Auto-generated \u2014 you can edit this"
               required
             />
             <Input
@@ -398,6 +392,21 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
               onChange={e => set('gps_coordinates', e.target.value)}
               placeholder="e.g. 41.123, -96.456"
             />
+            <div className="sm:col-span-2">
+              <WeatherLocationButton
+                onLocation={({ lat, lon }) => set('gps_coordinates', `${lat}, ${lon}`)}
+                onWeather={(w: WeatherData) => {
+                  setForm(f => ({
+                    ...f,
+                    wind_speed: w.wind_speed,
+                    wind_direction: w.wind_direction,
+                    temperature: w.temperature,
+                    humidity: w.humidity,
+                    sky_conditions: w.sky_conditions,
+                  }))
+                }}
+              />
+            </div>
             <Input
               label="Acreage Treated"
               type="number"
@@ -441,23 +450,23 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
         )}
       </div>
 
-      {/* ── Section 2: Product / Application Information ── */}
+      {/* Section 2: Product / Application Information */}
       <div className="space-y-3">
         <SectionHeader title="Product / Application Information" open={sections.product} onToggle={() => toggleSection('product')} />
         {sections.product && (
           <div className="space-y-4 px-1">
             {form.products.map((product, idx) => (
-              <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
+              <div key={idx} className="bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/5 rounded-2xl p-5 space-y-4">
                 {/* Product card header */}
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Product {idx + 1}
                   </h3>
                   {form.products.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeProduct(idx)}
-                      className="text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                      className="text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
                     >
                       Remove
                     </button>
@@ -593,12 +602,12 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
             <button
               type="button"
               onClick={addProduct}
-              className="text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+              className="text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors duration-200"
             >
               + Add Product
             </button>
 
-            {/* Tank Mix Notes — shared across all products */}
+            {/* Tank Mix Notes */}
             <div>
               <Textarea
                 label="Tank Mix Notes"
@@ -611,11 +620,27 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
         )}
       </div>
 
-      {/* ── Section 3: Weather / Conditions ── */}
+      {/* Section 3: Weather / Conditions */}
       <div className="space-y-3">
         <SectionHeader title="Weather / Conditions" open={sections.weather} onToggle={() => toggleSection('weather')} />
         {sections.weather && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-1">
+            <div className="sm:col-span-2">
+              <WeatherLocationButton
+                variant="refresh"
+                onLocation={({ lat, lon }) => set('gps_coordinates', `${lat}, ${lon}`)}
+                onWeather={(w: WeatherData) => {
+                  setForm(f => ({
+                    ...f,
+                    wind_speed: w.wind_speed,
+                    wind_direction: w.wind_direction,
+                    temperature: w.temperature,
+                    humidity: w.humidity,
+                    sky_conditions: w.sky_conditions,
+                  }))
+                }}
+              />
+            </div>
             <Input
               label="Wind Speed"
               value={form.wind_speed ?? ''}
@@ -626,13 +651,13 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
               label="Wind Direction"
               value={form.wind_direction ?? ''}
               onChange={e => set('wind_direction', e.target.value)}
-              placeholder="e.g. SW, South, 225°"
+              placeholder="e.g. SW, South, 225\u00b0"
             />
             <Input
               label="Temperature"
               value={form.temperature ?? ''}
               onChange={e => set('temperature', e.target.value)}
-              placeholder="e.g. 72°F"
+              placeholder="e.g. 72\u00b0F"
             />
             <Input
               label="Humidity"
@@ -675,7 +700,7 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
         )}
       </div>
 
-      {/* ── Section 4: Operational Notes ── */}
+      {/* Section 4: Operational Notes */}
       <div className="space-y-3">
         <SectionHeader title="Operational Notes" open={sections.ops} onToggle={() => toggleSection('ops')} />
         {sections.ops && (
@@ -730,7 +755,7 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
 
       {/* Error message */}
       {error && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
           {error}
         </div>
       )}
