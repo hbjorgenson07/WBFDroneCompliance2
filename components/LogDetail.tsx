@@ -49,8 +49,8 @@ export default function LogDetail({ log }: LogDetailProps) {
         <Field label="Date"             value={formatDate(log.date)} />
         <Field label="Start Time"       value={formatTime(log.start_time)} />
         <Field label="End Time"         value={formatTime(log.end_time)} />
-        <Field label="Operator / Pilot" value={log.operator_name} />
-        <Field label="Aircraft"         value={log.aircraft_tail_number} />
+        <Field label="Remote Pilot" value={log.operator_name} />
+        <Field label="Drone"         value={log.aircraft_tail_number} />
         <Field label="Customer"         value={log.customer_name} />
         <Field label="Field Name"       value={log.field_name} />
         <Field label="Field Location"   value={log.field_location} />

@@ -346,7 +346,7 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
             />
             <div>
               <Input
-                label="Operator / Pilot Name"
+                label="Remote Pilot"
                 value={form.operator_name ?? ''}
                 onChange={e => set('operator_name', e.target.value)}
                 list="operators-list"
@@ -356,11 +356,11 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
             </div>
             <div>
               <Input
-                label="Aircraft Tail Number"
+                label="Drone Registration / Serial #"
                 value={form.aircraft_tail_number ?? ''}
                 onChange={e => set('aircraft_tail_number', e.target.value)}
                 list="aircraft-list"
-                placeholder="e.g. N12345"
+                placeholder="e.g. FA3xxxxxx"
               />
               <DataList id="aircraft-list" items={suggestions.aircraft} />
             </div>
@@ -709,13 +709,13 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
               label="Swath Width"
               value={form.swath_width ?? ''}
               onChange={e => set('swath_width', e.target.value)}
-              placeholder="e.g. 60 ft"
+              placeholder="e.g. 30 ft"
             />
             <Input
               label="Flight Altitude Notes"
               value={form.flight_altitude_notes ?? ''}
               onChange={e => set('flight_altitude_notes', e.target.value)}
-              placeholder="e.g. 10 ft AGL"
+              placeholder="e.g. 6–10 ft AGL"
             />
             <div className="sm:col-span-2">
               <Textarea

@@ -50,16 +50,16 @@ export default function SettingsForm() {
   return (
     <div className="max-w-md space-y-4">
       <Input
-        label="Operator / Pilot Name"
+        label="Remote Pilot"
         value={form.operator_name ?? ''}
         onChange={e => setForm(f => ({ ...f, operator_name: e.target.value || null }))}
         placeholder="e.g. John Smith"
       />
       <Input
-        label="Aircraft Tail Number"
+        label="Drone Registration / Serial #"
         value={form.aircraft_tail_number ?? ''}
         onChange={e => setForm(f => ({ ...f, aircraft_tail_number: e.target.value || null }))}
-        placeholder="e.g. N12345"
+        placeholder="e.g. FA3xxxxxx"
       />
       <div className="flex items-center gap-3">
         <Button variant="primary" onClick={handleSave} loading={saving}>

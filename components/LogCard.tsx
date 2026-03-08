@@ -24,7 +24,7 @@ export default function LogCard({ log }: LogCardProps) {
         {log.customer_name ?? '\u2014'} &middot; {log.field_name ?? '\u2014'}
       </p>
 
-      {/* Date and aircraft */}
+      {/* Date and drone */}
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
         {formatDate(log.date)}
         {log.aircraft_tail_number && <span className="ml-2 text-gray-400">&middot; {log.aircraft_tail_number}</span>}

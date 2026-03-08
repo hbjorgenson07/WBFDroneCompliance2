@@ -64,9 +64,9 @@ export default async function StatsPage() {
           <BarRow label="Canceled"  count={byStatus.canceled}  total={logs.length} color="bg-gray-400" />
         </Section>
 
-        {/* Aircraft breakdown */}
+        {/* Drone breakdown */}
         {byAircraft.length > 0 && (
-          <Section title="Jobs by Aircraft">
+          <Section title="Jobs by Drone">
             {byAircraft.map(([tail, count]) => (
               <BarRow key={tail} label={tail} count={count} total={logs.length} color="bg-green-600" />
             ))}

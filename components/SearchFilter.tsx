@@ -83,7 +83,7 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
           ]}
         />
         <Input
-          placeholder="Aircraft..."
+          placeholder="Drone..."
           value={filters.aircraft}
           onChange={e => set('aircraft', e.target.value)}
         />

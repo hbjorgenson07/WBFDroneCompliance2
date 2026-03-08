@@ -37,9 +37,9 @@ function flightGuidance(windDir: string): { flyDirection: string; startSide: str
 }
 
 function sprayCondition(windMph: number): { label: string; color: string; bg: string; reason: string } {
-  if (windMph <= 10) return { label: 'Good to Spray', color: 'text-green-700 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', reason: '' }
-  if (windMph <= 15) return { label: 'Marginal', color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-900/30', reason: `Wind ${windMph} mph — approaching drift risk threshold` }
-  return { label: 'Not Recommended', color: 'text-red-700 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30', reason: `Wind ${windMph} mph — high drift risk, most labels restrict >15 mph` }
+  if (windMph <= 8) return { label: 'Good to Spray', color: 'text-green-700 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', reason: '' }
+  if (windMph <= 12) return { label: 'Marginal', color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-900/30', reason: `Wind ${windMph} mph — drift risk increases at low spray altitude` }
+  return { label: 'Not Recommended', color: 'text-red-700 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30', reason: `Wind ${windMph} mph — high drift risk for drone application` }
 }
 
 export default function WeatherWidget() {
@@ -126,7 +126,7 @@ export default function WeatherWidget() {
 
   const wind = parseWind(weather!.wind_speed)
   const condition = sprayCondition(wind)
-  const guidance = wind > 0 && wind <= 15 ? flightGuidance(weather!.wind_direction) : null
+  const guidance = wind > 0 && wind <= 12 ? flightGuidance(weather!.wind_direction) : null
 
   return (
     <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/80 dark:border-white/5 p-5 hover:shadow-[var(--shadow-1)] transition-all duration-200 ease-out">
@@ -170,7 +170,7 @@ export default function WeatherWidget() {
       <div className="mt-4">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${condition.color} ${condition.bg}`}>
           <span className={`w-1.5 h-1.5 rounded-full ${
-            wind <= 10 ? 'bg-green-500' : wind <= 15 ? 'bg-yellow-500' : 'bg-red-500'
+            wind <= 8 ? 'bg-green-500' : wind <= 12 ? 'bg-yellow-500' : 'bg-red-500'
           }`} />
           {condition.label}
         </span>

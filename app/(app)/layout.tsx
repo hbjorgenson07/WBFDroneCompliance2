@@ -18,8 +18,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-gray-200/60 dark:border-white/5 py-4 px-4 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 max-w-2xl mx-auto">
           This tool is for personal recordkeeping and operational organization only.
-          Regulatory requirements for aerial application records vary by state and operation type.
-          The operator is responsible for reviewing current FAA and applicable state regulations.
+          Regulatory requirements for drone application records vary by state and operation type.
+          The remote pilot is responsible for reviewing current FAA Part 107/Part 137 and applicable state regulations.
         </p>
       </footer>
     </div>

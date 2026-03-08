@@ -31,7 +31,7 @@ export function formatTime(timeStr: string | null): string {
 export function buildCsv(logs: SprayLog[]): string {
   const headers = [
     'Job ID', 'Date', 'Start Time', 'End Time', 'Status',
-    'Operator', 'Aircraft', 'Customer', 'Field Name', 'Field Location',
+    'Remote Pilot', 'Drone', 'Customer', 'Field Name', 'Field Location',
     'GPS Coordinates', 'Acreage', 'Crop Type', 'Application Type',
     'Product Name', 'EPA Reg #', 'Product Type', 'Target Pest',
     'Rate Applied', 'Total Quantity', 'Carrier Type', 'Carrier Rate',
