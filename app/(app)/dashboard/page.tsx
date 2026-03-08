@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import StatsCards from '@/components/StatsCards'
+import WeatherWidget from '@/components/WeatherWidget'
 import LogCard from '@/components/LogCard'
 import Button from '@/components/ui/Button'
 import { SprayLog } from '@/lib/types'
@@ -56,6 +57,9 @@ export default async function DashboardPage() {
         acresThisMonth={acresThisMonth}
         pendingJobs={pendingJobs}
       />
+
+      {/* Weather */}
+      <WeatherWidget />
 
       {/* Recent logs */}
       <div>
