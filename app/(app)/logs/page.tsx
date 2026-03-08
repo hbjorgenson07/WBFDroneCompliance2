@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import LogCard from '@/components/LogCard'
-import SearchFilter from '@/components/SearchFilter'
+import SearchFilter, { ExportFormat } from '@/components/SearchFilter'
 import Button from '@/components/ui/Button'
 import { SprayLog, LogFilters } from '@/lib/types'
 
@@ -41,7 +41,7 @@ export default function LogsPage() {
     return () => clearTimeout(timer)
   }, [filters, fetchLogs])
 
-  async function handleExport() {
+  async function handleExport(format: ExportFormat) {
     setExporting(true)
     const params = new URLSearchParams()
     if (filters.search)   params.set('search', filters.search)
@@ -51,8 +51,20 @@ export default function LogsPage() {
     if (filters.from)     params.set('from', filters.from)
     if (filters.to)       params.set('to', filters.to)
 
-    // Trigger the CSV download by navigating to the export endpoint
-    window.location.href = `/api/export?${params}`
+    if (format === 'csv') {
+      window.location.href = `/api/export?${params}`
+    } else if (format === 'indiana-csv') {
+      window.location.href = `/api/export/compliance?${params}`
+    } else if (format === 'indiana-pdf') {
+      try {
+        const res = await fetch(`/api/logs?${params}`)
+        const data = await res.json()
+        const { buildCompliancePdf } = await import('@/lib/compliance')
+        await buildCompliancePdf(Array.isArray(data) ? data : [])
+      } catch (err) {
+        console.error('PDF export failed:', err)
+      }
+    }
     setExporting(false)
   }
 

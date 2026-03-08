@@ -1,18 +1,35 @@
 'use client'
 
+import { useState, useRef, useEffect } from 'react'
 import { LogFilters } from '@/lib/types'
 import { Input } from './ui/Input'
 import { Select } from './ui/Select'
 import Button from './ui/Button'
 
+export type ExportFormat = 'csv' | 'indiana-csv' | 'indiana-pdf'
+
 interface SearchFilterProps {
   filters: LogFilters
   onChange: (filters: LogFilters) => void
-  onExport: () => void
+  onExport: (format: ExportFormat) => void
   exporting?: boolean
 }
 
 export default function SearchFilter({ filters, onChange, onExport, exporting }: SearchFilterProps) {
+  const [exportOpen, setExportOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setExportOpen(false)
+      }
+    }
+    if (exportOpen) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [exportOpen])
+
   function set(key: keyof LogFilters, value: string) {
     onChange({ ...filters, [key]: value })
   }
@@ -21,6 +38,11 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
     onChange({
       search: '', status: '', aircraft: '', crop: '', from: '', to: '', sort: 'newest',
     })
+  }
+
+  function handleExportClick(format: ExportFormat) {
+    setExportOpen(false)
+    onExport(format)
   }
 
   const hasFilters = filters.search || filters.status || filters.aircraft ||
@@ -96,9 +118,44 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
             </button>
           )}
         </div>
-        <Button variant="secondary" size="sm" onClick={onExport} loading={exporting}>
-          Export CSV
-        </Button>
+        <div className="relative" ref={dropdownRef}>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setExportOpen(prev => !prev)}
+            loading={exporting}
+          >
+            Export ▾
+          </Button>
+
+          {exportOpen && (
+            <div className="absolute right-0 bottom-full mb-1 w-56 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-xl shadow-lg z-50 overflow-hidden">
+              <button
+                onClick={() => handleExportClick('csv')}
+                className="w-full text-left px-3.5 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                <span className="block text-sm font-medium text-gray-900 dark:text-gray-100">Export CSV</span>
+                <span className="block text-xs text-gray-500 dark:text-gray-400">All fields, raw data</span>
+              </button>
+              <div className="border-t border-gray-100 dark:border-white/5" />
+              <button
+                onClick={() => handleExportClick('indiana-csv')}
+                className="w-full text-left px-3.5 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                <span className="block text-sm font-medium text-gray-900 dark:text-gray-100">Indiana Compliance CSV</span>
+                <span className="block text-xs text-gray-500 dark:text-gray-400">OISC required fields (355 IAC 4-4-1)</span>
+              </button>
+              <div className="border-t border-gray-100 dark:border-white/5" />
+              <button
+                onClick={() => handleExportClick('indiana-pdf')}
+                className="w-full text-left px-3.5 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                <span className="block text-sm font-medium text-gray-900 dark:text-gray-100">Indiana Compliance PDF</span>
+                <span className="block text-xs text-gray-500 dark:text-gray-400">Printable report for records</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
