@@ -84,6 +84,18 @@ export function todayString(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
+// Parse a GPS coordinates string like "41.123, -96.456" into [lat, lon] or null
+export function parseGps(coords: string | null): [number, number] | null {
+  if (!coords) return null
+  const parts = coords.split(',').map(s => s.trim())
+  if (parts.length !== 2) return null
+  const lat = parseFloat(parts[0])
+  const lon = parseFloat(parts[1])
+  if (isNaN(lat) || isNaN(lon)) return null
+  if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null
+  return [lat, lon]
+}
+
 // Truncate a string for display in cards
 export function truncate(str: string | null, length = 40): string {
   if (!str) return '—'
