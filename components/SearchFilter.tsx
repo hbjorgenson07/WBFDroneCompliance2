@@ -36,7 +36,7 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
 
   function reset() {
     onChange({
-      search: '', status: '', aircraft: '', crop: '', from: '', to: '', sort: 'newest',
+      search: '', status: '', productType: '', aircraft: '', crop: '', from: '', to: '', sort: 'newest',
     })
   }
 
@@ -45,8 +45,8 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
     onExport(format)
   }
 
-  const hasFilters = filters.search || filters.status || filters.aircraft ||
-                     filters.crop || filters.from || filters.to
+  const hasFilters = filters.search || filters.status || filters.productType ||
+                     filters.aircraft || filters.crop || filters.from || filters.to
 
   return (
     <div className="bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/5 rounded-2xl p-4 space-y-3">
@@ -67,6 +67,19 @@ export default function SearchFilter({ filters, onChange, onExport, exporting }:
             { value: 'planned',   label: 'Planned' },
             { value: 'completed', label: 'Completed' },
             { value: 'canceled',  label: 'Canceled' },
+          ]}
+        />
+        <Select
+          value={filters.productType}
+          onChange={e => set('productType', e.target.value)}
+          placeholder="All product types"
+          options={[
+            { value: 'Herbicide',        label: 'Herbicide' },
+            { value: 'Fungicide',        label: 'Fungicide' },
+            { value: 'Insecticide',      label: 'Insecticide' },
+            { value: 'Desiccant',        label: 'Desiccant' },
+            { value: 'Growth Regulator', label: 'Growth Regulator' },
+            { value: 'Adjuvant',         label: 'Adjuvant' },
           ]}
         />
         <Input

@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
   const search   = params.get('search') ?? ''
   const status   = params.get('status') ?? ''
   const aircraft = params.get('aircraft') ?? ''
-  const crop     = params.get('crop') ?? ''
+  const crop        = params.get('crop') ?? ''
+  const productType = params.get('productType') ?? ''
   const from     = params.get('from') ?? ''
   const to       = params.get('to') ?? ''
 
@@ -29,7 +30,8 @@ export async function GET(request: NextRequest) {
   }
   if (status)   query = query.eq('mission_status', status)
   if (aircraft) query = query.ilike('aircraft_tail_number', `%${aircraft}%`)
-  if (crop)     query = query.ilike('crop_type', `%${crop}%`)
+  if (crop)        query = query.ilike('crop_type', `%${crop}%`)
+  if (productType) query = query.ilike('product_type', `%${productType}%`)
   if (from)     query = query.gte('date', from)
   if (to)       query = query.lte('date', to)
 

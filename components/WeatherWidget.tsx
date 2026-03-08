@@ -10,6 +10,32 @@ function parseWind(windStr: string): number {
   return match ? parseFloat(match[1]) : 0
 }
 
+// Aerial application best practice: fly perpendicular to the wind, start on
+// the downwind side so drift carries product onto untreated area.
+function flightGuidance(windDir: string): { flyDirection: string; startSide: string } | null {
+  // Map compass abbreviations to a simplified cardinal/intercardinal bucket
+  const map: Record<string, { fly: string; start: string }> = {
+    N:   { fly: 'East–West',      start: 'south (downwind)' },
+    NNE: { fly: 'East–West',      start: 'south-southwest (downwind)' },
+    NE:  { fly: 'Northwest–Southeast', start: 'southwest (downwind)' },
+    ENE: { fly: 'North–South',    start: 'west-southwest (downwind)' },
+    E:   { fly: 'North–South',    start: 'west (downwind)' },
+    ESE: { fly: 'North–South',    start: 'west-northwest (downwind)' },
+    SE:  { fly: 'Northeast–Southwest', start: 'northwest (downwind)' },
+    SSE: { fly: 'East–West',      start: 'north-northwest (downwind)' },
+    S:   { fly: 'East–West',      start: 'north (downwind)' },
+    SSW: { fly: 'East–West',      start: 'north-northeast (downwind)' },
+    SW:  { fly: 'Northwest–Southeast', start: 'northeast (downwind)' },
+    WSW: { fly: 'North–South',    start: 'east-northeast (downwind)' },
+    W:   { fly: 'North–South',    start: 'east (downwind)' },
+    WNW: { fly: 'North–South',    start: 'east-southeast (downwind)' },
+    NW:  { fly: 'Northeast–Southwest', start: 'southeast (downwind)' },
+    NNW: { fly: 'East–West',      start: 'south-southeast (downwind)' },
+  }
+  const entry = map[windDir.toUpperCase()]
+  return entry ? { flyDirection: entry.fly, startSide: entry.start } : null
+}
+
 function sprayCondition(windMph: number): { label: string; color: string; bg: string; reason: string } {
   if (windMph <= 10) return { label: 'Good to Spray', color: 'text-green-700 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', reason: '' }
   if (windMph <= 15) return { label: 'Marginal', color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-900/30', reason: `Wind ${windMph} mph — approaching drift risk threshold` }
@@ -100,6 +126,7 @@ export default function WeatherWidget() {
 
   const wind = parseWind(weather!.wind_speed)
   const condition = sprayCondition(wind)
+  const guidance = wind > 0 && wind <= 15 ? flightGuidance(weather!.wind_direction) : null
 
   return (
     <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/80 dark:border-white/5 p-5 hover:shadow-[var(--shadow-1)] transition-all duration-200 ease-out">
@@ -151,6 +178,19 @@ export default function WeatherWidget() {
           <p className={`text-xs mt-1.5 ${condition.color}`}>{condition.reason}</p>
         )}
       </div>
+
+      {/* Flight direction guidance */}
+      {guidance && (
+        <div className="mt-3 px-3 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200/60 dark:border-blue-800/30">
+          <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1">Suggested Flight Pattern</p>
+          <p className="text-xs text-blue-600 dark:text-blue-300">
+            Fly <span className="font-semibold">{guidance.flyDirection}</span> passes (perpendicular to wind)
+          </p>
+          <p className="text-xs text-blue-600 dark:text-blue-300">
+            Start on the <span className="font-semibold">{guidance.startSide}</span> side of the field
+          </p>
+        </div>
+      )}
     </div>
   )
 }

@@ -126,6 +126,7 @@ export type UserProfileFormData = Pick<UserProfile, 'operator_name' | 'aircraft_
 export interface LogFilters {
   search: string
   status: MissionStatus | ''
+  productType: string
   aircraft: string
   crop: string
   from: string

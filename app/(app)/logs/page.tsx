@@ -8,7 +8,7 @@ import Button from '@/components/ui/Button'
 import { SprayLog, LogFilters } from '@/lib/types'
 
 const defaultFilters: LogFilters = {
-  search: '', status: '', aircraft: '', crop: '', from: '', to: '', sort: 'newest',
+  search: '', status: '', productType: '', aircraft: '', crop: '', from: '', to: '', sort: 'newest',
 }
 
 export default function LogsPage() {
@@ -22,8 +22,9 @@ export default function LogsPage() {
     setLoading(true)
     const params = new URLSearchParams()
     if (f.search)   params.set('search', f.search)
-    if (f.status)   params.set('status', f.status)
-    if (f.aircraft) params.set('aircraft', f.aircraft)
+    if (f.status)      params.set('status', f.status)
+    if (f.productType) params.set('productType', f.productType)
+    if (f.aircraft)    params.set('aircraft', f.aircraft)
     if (f.crop)     params.set('crop', f.crop)
     if (f.from)     params.set('from', f.from)
     if (f.to)       params.set('to', f.to)
@@ -45,8 +46,9 @@ export default function LogsPage() {
     setExporting(true)
     const params = new URLSearchParams()
     if (filters.search)   params.set('search', filters.search)
-    if (filters.status)   params.set('status', filters.status)
-    if (filters.aircraft) params.set('aircraft', filters.aircraft)
+    if (filters.status)      params.set('status', filters.status)
+    if (filters.productType) params.set('productType', filters.productType)
+    if (filters.aircraft)    params.set('aircraft', filters.aircraft)
     if (filters.crop)     params.set('crop', filters.crop)
     if (filters.from)     params.set('from', filters.from)
     if (filters.to)       params.set('to', filters.to)
