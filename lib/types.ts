@@ -57,6 +57,12 @@ export interface SprayLog {
   incident_notes: string | null
   general_remarks: string | null
 
+  // Application Map
+  map_geojson: Record<string, unknown> | null
+  map_shapefile_path: string | null
+  map_overlay_path: string | null
+  map_overlay_bounds: [[number, number], [number, number]] | null
+
   // Metadata
   created_at: string
   updated_at: string

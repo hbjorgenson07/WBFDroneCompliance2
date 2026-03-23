@@ -1,6 +1,12 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { SprayLog, ProductEntry } from '@/lib/types'
 import Badge from './ui/Badge'
 import { formatDate, formatTime } from '@/lib/utils'
+
+const ApplicationMap = dynamic(() => import('./ApplicationMap'), { ssr: false })
 
 interface LogDetailProps {
   log: SprayLog
@@ -29,6 +35,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function LogDetail({ log }: LogDetailProps) {
+  const [overlayUrl, setOverlayUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (log.map_overlay_path) {
+      fetch(`/api/logs/${log.id}/map-image`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => { if (data?.url) setOverlayUrl(data.url) })
+        .catch(() => {})
+    }
+  }, [log.id, log.map_overlay_path])
+
   return (
     <div className="space-y-4 print:space-y-3">
 
@@ -125,6 +142,22 @@ export default function LogDetail({ log }: LogDetailProps) {
         <Field label="Incident / Issue Notes" value={log.incident_notes} />
         <Field label="General Remarks"        value={log.general_remarks} />
       </Section>
+
+      {/* Application Map */}
+      {log.map_geojson && (
+        <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/60 dark:border-white/5 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50/80 dark:bg-white/[0.03] border-b border-gray-200/60 dark:border-white/5">
+            <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Application Map</h2>
+          </div>
+          <div className="p-4">
+            <ApplicationMap
+              geojson={log.map_geojson as unknown as GeoJSON.FeatureCollection}
+              overlayUrl={overlayUrl}
+              overlayBounds={log.map_overlay_bounds}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Record Metadata */}
       <Section title="Record Metadata">

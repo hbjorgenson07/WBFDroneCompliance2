@@ -66,6 +66,24 @@ export async function DELETE(
 
   const { id } = await params
 
+  // Get map file paths before deleting the log
+  const { data: log } = await supabase
+    .from('spray_logs')
+    .select('map_shapefile_path, map_overlay_path')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single()
+
+  // Clean up Storage files if any exist
+  if (log) {
+    const filesToDelete: string[] = []
+    if (log.map_shapefile_path) filesToDelete.push(log.map_shapefile_path)
+    if (log.map_overlay_path) filesToDelete.push(log.map_overlay_path)
+    if (filesToDelete.length > 0) {
+      await supabase.storage.from('map-uploads').remove(filesToDelete)
+    }
+  }
+
   const { error } = await supabase
     .from('spray_logs')
     .delete()

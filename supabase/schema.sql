@@ -124,3 +124,45 @@ CREATE TRIGGER user_profiles_updated_at
   BEFORE UPDATE ON user_profiles
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================
+-- Application Map columns (run this ALTER if table already exists)
+-- ============================================================
+ALTER TABLE spray_logs
+  ADD COLUMN IF NOT EXISTS map_geojson        JSONB  DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS map_shapefile_path TEXT   DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS map_overlay_path   TEXT   DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS map_overlay_bounds JSONB  DEFAULT NULL;
+
+-- ============================================================
+-- Supabase Storage: map-uploads bucket
+-- ============================================================
+-- Create the bucket in Supabase Dashboard > Storage > New Bucket:
+--   Name: map-uploads
+--   Public: OFF (private)
+--
+-- Then add these RLS policies in the SQL Editor:
+--
+-- Allow users to upload to their own folder:
+-- CREATE POLICY "Users can upload to own folder"
+--   ON storage.objects FOR INSERT
+--   WITH CHECK (
+--     bucket_id = 'map-uploads'
+--     AND (storage.foldername(name))[1] = auth.uid()::text
+--   );
+--
+-- Allow users to read their own files:
+-- CREATE POLICY "Users can read own files"
+--   ON storage.objects FOR SELECT
+--   USING (
+--     bucket_id = 'map-uploads'
+--     AND (storage.foldername(name))[1] = auth.uid()::text
+--   );
+--
+-- Allow users to delete their own files:
+-- CREATE POLICY "Users can delete own files"
+--   ON storage.objects FOR DELETE
+--   USING (
+--     bucket_id = 'map-uploads'
+--     AND (storage.foldername(name))[1] = auth.uid()::text
+--   );

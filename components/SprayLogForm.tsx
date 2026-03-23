@@ -10,6 +10,7 @@ import { SprayLogFormData, ProductEntry, emptyProduct } from '@/lib/types'
 import { generateJobId, todayString } from '@/lib/utils'
 import ProductSearch from './ProductSearch'
 import WeatherLocationButton, { WeatherData } from './WeatherLocationButton'
+import MapUpload from './MapUpload'
 
 interface SprayLogFormProps {
   initialData?: Partial<SprayLogFormData>
@@ -57,6 +58,10 @@ function emptyForm(): SprayLogFormData {
     drift_mitigation_notes:    null,
     incident_notes:            null,
     general_remarks:           null,
+    map_geojson:               null,
+    map_shapefile_path:        null,
+    map_overlay_path:          null,
+    map_overlay_bounds:        null,
   }
 }
 
@@ -165,7 +170,13 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
     label_restriction_notes: string | null
   }>>([])
 
-  const [sections, setSections] = useState({ mission: true, product: true, weather: true, ops: true })
+  const [mapData, setMapData] = useState({
+    map_geojson: initialData?.map_geojson ?? null,
+    map_overlay_path: initialData?.map_overlay_path ?? null,
+    map_overlay_bounds: initialData?.map_overlay_bounds ?? null,
+  })
+
+  const [sections, setSections] = useState({ mission: true, product: true, weather: true, ops: true, map: true })
 
   useEffect(() => {
     fetch('/api/logs?limit=500')
@@ -750,6 +761,25 @@ export default function SprayLogForm({ initialData, logId }: SprayLogFormProps) 
               />
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Section 5: Application Map */}
+      <div className="space-y-3">
+        <SectionHeader title="Application Map" open={sections.map} onToggle={() => toggleSection('map')} />
+        {sections.map && (
+          logId ? (
+            <MapUpload
+              logId={logId}
+              mapData={mapData}
+              onUploadComplete={(data) => setMapData(data)}
+              onRemove={() => setMapData({ map_geojson: null, map_overlay_path: null, map_overlay_bounds: null })}
+            />
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400 px-1">
+              Save the log first to upload map files.
+            </p>
+          )
         )}
       </div>
 
